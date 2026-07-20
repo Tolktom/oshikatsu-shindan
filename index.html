@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>推し活16タイプ診断</title>
+<meta name="description" content="24問・約2分。あなたの推し方はどのタイプ?同担拒否度も測定できる推し活性格診断。">
+<meta property="og:title" content="推し活16タイプ診断">
+<meta property="og:description" content="24問・約2分で、あなたの推し方タイプと同担拒否度がわかる。">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0b1a;
+  --card:#1a1530;
+  --card2:#241c40;
+  --text:#f2effa;
+  --muted:#8d86a8;
+  --line:#332a55;
+  --oshi:#ff4d9e; /* デフォルト推し色 */
+  --radius:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN",sans-serif;
+  min-height:100svh;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in srgb, var(--oshi) 18%, transparent), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 110%, color-mix(in srgb, var(--oshi) 10%, transparent), transparent);
+  transition:background-image .4s;
+}
+.wrap{max-width:520px;margin:0 auto;padding:28px 20px 64px}
+.screen{display:none}
+.screen.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.screen.active{animation:none}}
+
+/* ---------- start ---------- */
+.eyebrow{
+  font-size:12px;letter-spacing:.24em;color:var(--oshi);
+  font-weight:700;text-align:center;margin-bottom:14px;
+}
+h1{
+  font-family:"Dela Gothic One",sans-serif;
+  font-size:clamp(30px,9vw,44px);
+  line-height:1.25;text-align:center;font-weight:400;
+  text-shadow:0 0 24px color-mix(in srgb, var(--oshi) 45%, transparent);
+}
+.sub{text-align:center;color:var(--muted);font-size:14px;margin-top:14px;line-height:1.9}
+.colorpick{margin-top:36px}
+.colorpick p{font-size:13px;font-weight:700;text-align:center;margin-bottom:14px}
+.swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;justify-items:center}
+.swatch{
+  width:46px;height:46px;border-radius:50%;border:3px solid transparent;
+  cursor:pointer;transition:transform .15s;
+  box-shadow:0 0 14px color-mix(in srgb, var(--c) 55%, transparent);
+  background:var(--c);
+}
+.swatch:active{transform:scale(.92)}
+.swatch[aria-pressed="true"]{border-color:#fff;transform:scale(1.12)}
+.btn{
+  display:block;width:100%;margin-top:34px;padding:18px;
+  background:var(--oshi);color:#fff;border:none;border-radius:999px;
+  font-family:inherit;font-size:17px;font-weight:700;cursor:pointer;
+  box-shadow:0 6px 28px color-mix(in srgb, var(--oshi) 50%, transparent);
+  transition:transform .12s;
+}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1.5px solid var(--line);box-shadow:none}
+.note{margin-top:16px;font-size:11.5px;color:var(--muted);text-align:center}
+
+/* ---------- quiz ---------- */
+.progress-row{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.qcount{font-size:13px;font-weight:700;color:var(--oshi);min-width:56px}
+.bar{flex:1;height:8px;background:var(--card2);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--oshi);border-radius:99px;transition:width .25s;box-shadow:0 0 10px var(--oshi)}
+.qcard{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:30px 24px;min-height:150px;display:flex;align-items:center;
+}
+.qtext{font-size:18px;font-weight:700;line-height:1.75}
+.answers{display:grid;gap:12px;margin-top:24px}
+.ans{
+  padding:16px;border-radius:14px;border:1.5px solid var(--line);
+  background:var(--card);color:var(--text);font-family:inherit;
+  font-size:15px;font-weight:500;cursor:pointer;text-align:center;
+  transition:border-color .15s, background .15s, transform .1s;
+}
+.ans:active{transform:scale(.98)}
+.ans:hover{border-color:var(--oshi)}
+.back{
+  margin-top:22px;background:none;border:none;color:var(--muted);
+  font-family:inherit;font-size:13px;cursor:pointer;padding:8px;
+}
+
+/* ---------- result ---------- */
+.rcard{
+  background:linear-gradient(160deg, var(--card2), var(--card));
+  border:1px solid color-mix(in srgb, var(--oshi) 55%, var(--line));
+  border-radius:22px;padding:32px 24px;
+  box-shadow:0 0 40px color-mix(in srgb, var(--oshi) 22%, transparent);
+}
+.rlabel{font-size:11px;letter-spacing:.22em;color:var(--muted);text-align:center;font-weight:700}
+.rcode{
+  text-align:center;font-size:14px;font-weight:700;color:var(--oshi);
+  letter-spacing:.35em;margin-top:14px;
+}
+.rname{
+  font-family:"Dela Gothic One",sans-serif;font-weight:400;
+  font-size:clamp(26px,7.6vw,34px);text-align:center;line-height:1.4;margin-top:6px;
+  text-shadow:0 0 20px color-mix(in srgb, var(--oshi) 40%, transparent);
+}
+.rcopy{text-align:center;color:var(--oshi);font-size:14px;font-weight:700;margin-top:12px}
+.rdesc{font-size:14px;line-height:2;color:var(--text);margin-top:18px}
+.axes{margin-top:26px;display:grid;gap:14px}
+.axis .lbl{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:6px}
+.axis .lbl .l{color:var(--text)} .axis .lbl .r{color:var(--muted)}
+.axis .bar{height:10px}
+.doutan{
+  margin-top:26px;padding:18px;border-radius:14px;
+  background:color-mix(in srgb, var(--oshi) 10%, var(--card));
+  border:1px dashed color-mix(in srgb, var(--oshi) 50%, var(--line));
+}
+.doutan .t{font-size:12px;font-weight:700;color:var(--muted)}
+.doutan .v{display:flex;align-items:baseline;gap:10px;margin-top:6px}
+.doutan .pct{font-family:"Dela Gothic One",sans-serif;font-size:34px;color:var(--oshi)}
+.doutan .title{font-size:15px;font-weight:700}
+.aisho{margin-top:22px;font-size:13.5px;line-height:1.9;color:var(--muted)}
+.aisho b{color:var(--text)}
+.share{margin-top:30px;display:grid;gap:12px}
+canvas{display:none}
+footer{margin-top:44px;text-align:center;font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- スタート画面 -->
+  <section class="screen active" id="scr-start">
+    <p class="eyebrow">OSHIKATSU 16 TYPES</p>
+    <h1>推し活<br>16タイプ診断</h1>
+    <p class="sub">24問・約2分。<br>あなたの推し方タイプと<br>「同担拒否度」がわかる。</p>
+    <div class="colorpick">
+      <p>あなたの推し色を選んでスタート</p>
+      <div class="swatches" id="swatches"></div>
+    </div>
+    <button class="btn" id="btn-start">診断をはじめる</button>
+    <p class="note">結果はいつでもXでシェアできます。回答データはこの端末内でのみ処理されます。</p>
+  </section>
+
+  <!-- 質問画面 -->
+  <section class="screen" id="scr-quiz">
+    <div class="progress-row">
+      <span class="qcount" id="qcount">1 / 24</span>
+      <div class="bar"><i id="pbar"></i></div>
+    </div>
+    <div class="qcard"><p class="qtext" id="qtext"></p></div>
+    <div class="answers">
+      <button class="ans" data-v="2">かなりあてはまる</button>
+      <button class="ans" data-v="1">ややあてはまる</button>
+      <button class="ans" data-v="-1">あまりあてはまらない</button>
+      <button class="ans" data-v="-2">まったくあてはまらない</button>
+    </div>
+    <button class="back" id="btn-back">← ひとつ前に戻る</button>
+  </section>
+
+  <!-- 結果画面 -->
+  <section class="screen" id="scr-result">
+    <div class="rcard" id="rcard">
+      <p class="rlabel">あなたの推し活タイプ</p>
+      <p class="rcode" id="rcode"></p>
+      <p class="rname" id="rname"></p>
+      <p class="rcopy" id="rcopy"></p>
+      <p class="rdesc" id="rdesc"></p>
+      <div class="axes" id="axes"></div>
+      <div class="doutan">
+        <p class="t">同担拒否度</p>
+        <div class="v"><span class="pct" id="dpct"></span><span class="title" id="dtitle"></span></div>
+        <div class="bar" style="margin-top:10px"><i id="dbar" style="width:0"></i></div>
+      </div>
+      <p class="aisho" id="aisho"></p>
+    </div>
+    <div class="share">
+      <button class="btn" id="btn-x">Xで結果をシェア</button>
+      <button class="btn ghost" id="btn-img">結果画像を保存</button>
+      <button class="btn ghost" id="btn-retry">もう一度診断する</button>
+    </div>
+    <footer>#推し活16タイプ診断</footer>
+  </section>
+
+</div>
+<canvas id="cv" width="1080" height="1080"></canvas>
+
+<script>
+"use strict";
+
+/* ================= データ ================= */
+
+const OSHI_COLORS = [
+  ["赤","#ff3b5c"],["ピンク","#ff4d9e"],["オレンジ","#ff8a3d"],["黄","#ffd23f"],["緑","#3ddc84"],
+  ["水色","#3ec9ff"],["青","#4d6bff"],["紫","#a55bff"],["白","#e9e9f2"],["黒","#9aa0b4"]
+];
+
+/* axis: GZ/EK/FH/TM/D  dir: 加点される極 */
+const QUESTIONS = [
+  {t:"推しに関する「最高の思い出」を挙げるなら、家の外での出来事が多い", axis:"GZ", dir:"G", rep:true},
+  {t:"配信やアーカイブがあるなら、無理して現地に行かなくてもいいと思う", axis:"GZ", dir:"Z"},
+  {t:"お金と移動時間がかかっても、その場の空気には代えられない", axis:"GZ", dir:"G"},
+  {t:"人混みと待ち時間のことを考えると、正直ちょっと気が重い", axis:"GZ", dir:"Z"},
+  {t:"「現地の思い出」より「いつでも見返せる供給」のほうが資産だと思う", axis:"GZ", dir:"Z"},
+
+  {t:"推しの魅力を語ろうとすると、気づけば感情の話ばかりしている", axis:"EK", dir:"E", rep:true},
+  {t:"新しい供給が来たら、まず時系列や設定を整理したくなる", axis:"EK", dir:"K"},
+  {t:"「なんで好きなの?」に理屈で答えられなくても、まったく困らない", axis:"EK", dir:"E"},
+  {t:"考察や解説を読んだり書いたりする時間は、供給そのものと同じくらい楽しい", axis:"EK", dir:"K"},
+  {t:"泣ける場面は、何回見ても同じところで泣く", axis:"EK", dir:"E"},
+
+  {t:"良いと思ったものは、黙っていられない性格だ", axis:"FH", dir:"F", rep:true},
+  {t:"推しの話は、聞かれない限り自分からはしない", axis:"FH", dir:"H"},
+  {t:"自分の発信がきっかけで誰かが沼に落ちたら、最高に嬉しい", axis:"FH", dir:"F"},
+  {t:"推し活アカウントの存在は、リアルの知り合いに絶対バレたくない", axis:"FH", dir:"H"},
+  {t:"感想は、言葉にして外に出すことで完成すると思う", axis:"FH", dir:"F"},
+
+  {t:"「推しは誰?」と聞かれたら、迷わずひとりの名前が出てくる", axis:"TM", dir:"T", rep:true},
+  {t:"魅力的な存在に出会ったら、推しが増えるのは自然なことだと思う", axis:"TM", dir:"M"},
+  {t:"推し以外のメンバーや周辺情報は、正直そこまで追っていない", axis:"TM", dir:"T"},
+  {t:"気づけばいつも、ジャンルの垣根なく複数の沼に足を突っ込んでいる", axis:"TM", dir:"M"},
+  {t:"推しへの愛は、分散させるより一点に注ぎ込みたい", axis:"TM", dir:"T"},
+
+  {t:"同じ推しのファンを見ると、「仲間」というより「ライバル」だと感じる", axis:"D", dir:"R"},
+  {t:"同担と推しの話で盛り上がれるなら、推し活はもっと楽しくなると思う", axis:"D", dir:"W"},
+  {t:"「自分にしか分かっていない推しの魅力」がある、と思いたい", axis:"D", dir:"R"},
+  {t:"同担のSNSアカウントを見つけたら、むしろ積極的にフォローしにいく", axis:"D", dir:"W"}
+];
+
+const AXES = [
+  {key:"GZ", first:"G", labels:["現場","在宅"]},
+  {key:"EK", first:"E", labels:["エモ","考察"]},
+  {key:"FH", first:"F", labels:["布教","隠密"]},
+  {key:"TM", first:"T", labels:["単推し","箱推し"]}
+];
+
+const TYPES = {
+  GEFT:{name:"非公認広報大使", copy:"燃えて、叫んで、広めていく。",
+    desc:"現場の熱をそのまま言葉にできる、推し界隈の火付け役。あなたの実況とレポで沼に落ちた人、確実にいます。一途な愛と発信力のかけ算は、推しにとって最強の広告塔。",
+    ai:["ZKHT","開かずの資料館","あなたの熱をそっと記録してくれる人。"]},
+  GEFM:{name:"人間ミラーボール", copy:"推せるものは、全部推す。",
+    desc:"現場にいるだけで周囲のテンションが上がる、生粋のお祭り体質。箱ごと愛するスタイルだから、界隈の誰とでも仲良くなれる。あなたの周りにはいつも人が集まります。",
+    ai:["ZEHM","TLの座敷わらし","あなたの熱量を、画面越しに微笑んで見てる人。"]},
+  GEHT:{name:"恋する地蔵", copy:"誰にも言わない。でも、誰よりも熱い。",
+    desc:"現場には必ずいる。でも多くを語らない。内側で燃える愛は本物で、推しへの想いの深さなら誰にも負けない自信がある。その静かな熱量、実は周りにバレてます。",
+    ai:["GEFT","非公認広報大使","あなたの代わりに叫んでくれる人。"]},
+  GEHM:{name:"現場忍者", copy:"気づけば、全部の現場にいる。",
+    desc:"特定の推しの話はしないのに、なぜかどの現場でも見かける影の皆勤賞。箱全体を静かに、しかし確実に愛するスタイル。「あの人また来てる」って言われてます(良い意味で)。",
+    ai:["ZKFM","人力検索エンジン","あなたの目撃情報を記録してくれてる人。"]},
+  GKFT:{name:"レポ職人", copy:"その瞬間を、言葉で残す。",
+    desc:"現場の記憶力と観察眼、そして発信力を兼ね備えた界隈の公式記録係(非公式)。あなたのレポを待ってる人が確実にいる。単推しゆえの解像度の高さは、もはや研究レベル。",
+    ai:["ZEFT","深夜のポエマー","あなたのレポに感情を乗せて拡散してくれる人。"]},
+  GKFM:{name:"沼の管制塔", copy:"全体を見てるから、語れることがある。",
+    desc:"箱全体を俯瞰で見られる貴重な存在。メンバー間の関係性、演出の意図、界隈の歴史——あなたの解説で初心者が救われてます。現場慣れしたその立ち振る舞い、頼りにされてます。",
+    ai:["ZEHT","愛の金庫番","あなたの解説を、静かに全部読んでる人。"]},
+  GKHT:{name:"網膜レコーダー", copy:"見てる。ずっと、深く、見てる。",
+    desc:"現場で騒がず、じっと推しを観察して細部の変化に気づくタイプ。髪型、表情、ちょっとした成長——誰よりも早く気づくのに、誰にも言わない。その情報量、国家機密級。",
+    ai:["GEFM","人間ミラーボール","あなたが観察に集中できる空気を作ってくれる人。"]},
+  GKHM:{name:"野生の研究者", copy:"現場は、研究対象である。",
+    desc:"複数の沼を静かに巡回し、データを蓄積し続ける学者肌。SNSには残さないけど、脳内アーカイブは膨大。あなたに話を聞けば界隈の歴史がわかる、隠れた生き字引。",
+    ai:["ZEFM","お茶の間応援団長","あなたの知識を引き出すのが上手い人。"]},
+  ZEFT:{name:"深夜のポエマー", copy:"画面の前から、愛を叫ぶ。",
+    desc:"在宅でも熱量は現場勢に負けない。推しへの想いを言葉にする力が高く、あなたのポストで泣いた人、沼に落ちた人多数。単推しの深い愛×発信力は、在宅界の名物ポエマー。",
+    ai:["GKFT","レポ職人","あなたに現場の空気を届けてくれる人。"]},
+  ZEFM:{name:"お茶の間応援団長", copy:"家から全員を全力応援。",
+    desc:"配信を見ながら家で叫び、SNSで盛り上げ、箱全体の空気を温める在宅界の太陽。あなたのポジティブな発信は界隈の平和に貢献してます。実質、広報担当。",
+    ai:["GKHM","野生の研究者","あなたの知らない現場の話を持ってる人。"]},
+  ZEHT:{name:"愛の金庫番", copy:"この愛は、誰にも見せない。",
+    desc:"推しへの想いは深海より深いのに、外には一切出さない完全非公開型。ひとりの部屋で推しに浸る時間が、何よりの幸せ。その金庫、一生誰にも開けさせないでください。",
+    ai:["GKFM","沼の管制塔","あなたが欲しい情報だけを置いていってくれる人。"]},
+  ZEHM:{name:"TLの座敷わらし", copy:"沼は広く、深く、静かに。",
+    desc:"複数の沼に静かに生息し、それぞれをマイペースに愛でるスタイル。SNSでは無言、でも供給は全部見てる。通知欄だけがあなたの活動を知っている。",
+    ai:["GEFM","人間ミラーボール","あなたの分まで騒いでくれる人。"]},
+  ZKFT:{name:"安楽椅子探偵", copy:"その伏線、半年前に指摘しました。",
+    desc:"在宅の時間をフルに使って推しを分析し、考察を発信する頭脳派。あなたの考察が当たった時の界隈のざわつき、快感ですよね。単推しゆえの掘りの深さは、もはや論文。",
+    ai:["GEHT","恋する地蔵","あなたの考察を現場で答え合わせしてる人。"]},
+  ZKFM:{name:"人力検索エンジン", copy:"界隈のことなら、大体わかる。",
+    desc:"箱全体の情報を網羅的に収集・整理し、惜しみなく共有する知の巨人。「これって何?」に必ず答えてくれる人として、界隈の新規に感謝されてます。あなたがいる界隈は治安がいい。",
+    ai:["GEHM","現場忍者","あなたのデータに現場の実測値をくれる人。"]},
+  ZKHT:{name:"開かずの資料館", copy:"記録は、私だけの宝物。",
+    desc:"推しの供給を収集・整理・保存する在宅の司書。フォルダ分けは完璧、タイムスタンプ付き。誰にも見せないその個人アーカイブ、実は文化遺産級の価値があります。",
+    ai:["GEFT","非公認広報大使","あなたのアーカイブに新しい熱を運んでくる人。"]},
+  ZKHM:{name:"界隈の深海魚", copy:"誰も知らない場所で、すべてを知る。",
+    desc:"複数の沼を深く静かに研究する完全在宅の探求者。発信は一切しないのに情報量は界隈トップクラス。あなたの存在は誰にも知られていない。でも、あなたは全部知っている。",
+    ai:["ZEFM","お茶の間応援団長","深海のあなたに光を届けてくれる人。"]}
+};
+
+const DOUTAN_TITLES = [
+  [85,"同担拒否ガチ勢🔥"],[60,"やや拒否(視界には入れたくない)"],
+  [40,"中立(住み分けできれば無)"],[15,"同担歓迎(語れる仲間求む)"],[0,"全人類同担化計画"]
+];
+
+/* ================= 状態 ================= */
+
+let order = [];      // シャッフル後の質問index配列
+let answers = {};    // 質問index -> 回答値(2/1/-1/-2)
+let cur = 0;
+let oshiColor = OSHI_COLORS[1][1];
+
+const $ = id => document.getElementById(id);
+const show = id => {
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $(id).classList.add("active");
+  window.scrollTo(0,0);
+};
+
+/* ================= 初期化 ================= */
+
+function initSwatches(){
+  const box = $("swatches");
+  OSHI_COLORS.forEach(([name,hex],i)=>{
+    const b = document.createElement("button");
+    b.className = "swatch";
+    b.style.setProperty("--c",hex);
+    b.setAttribute("aria-label", name);
+    b.setAttribute("aria-pressed", i===1 ? "true" : "false");
+    b.onclick = ()=>{
+      document.querySelectorAll(".swatch").forEach(s=>s.setAttribute("aria-pressed","false"));
+      b.setAttribute("aria-pressed","true");
+      oshiColor = hex;
+      document.documentElement.style.setProperty("--oshi",hex);
+    };
+    box.appendChild(b);
+  });
+}
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* ================= 診断フロー ================= */
+
+function startQuiz(){
+  order = shuffle([...QUESTIONS.keys()]);
+  answers = {};
+  cur = 0;
+  renderQ();
+  show("scr-quiz");
+}
+
+function renderQ(){
+  $("qcount").textContent = `${cur+1} / ${order.length}`;
+  $("pbar").style.width = `${(cur/order.length)*100}%`;
+  $("qtext").textContent = QUESTIONS[order[cur]].t;
+  $("btn-back").style.visibility = cur===0 ? "hidden" : "visible";
+}
+
+function answer(v){
+  answers[order[cur]] = v;
+  if(cur < order.length-1){ cur++; renderQ(); }
+  else finish();
+}
+
+function calc(){
+  // 4軸: 第一極方向の合計(-10〜+10)
+  const sums = {GZ:0, EK:0, FH:0, TM:0};
+  let dSum = 0; // 拒否方向(-8〜+8)
+  QUESTIONS.forEach((q,i)=>{
+    const v = answers[i] ?? 0;
+    if(q.axis==="D"){ dSum += (q.dir==="R" ? v : -v); return; }
+    const first = AXES.find(a=>a.key===q.axis).first;
+    sums[q.axis] += (q.dir===first ? v : -v);
+  });
+
+  let code = "";
+  const pcts = [];
+  AXES.forEach(a=>{
+    let s = sums[a.key];
+    if(s===0){
+      // 同点: 代表質問の回答側で決定
+      const repIdx = QUESTIONS.findIndex(q=>q.axis===a.key && q.rep);
+      s = (answers[repIdx] ?? 1) > 0 ? 1 : -1;
+    }
+    const second = a.key.replace(a.first,"");
+    code += s>0 ? a.first : second;
+    pcts.push(Math.round(((sums[a.key]+10)/20)*100)); // 第一極%
+  });
+
+  const d = Math.round(((dSum+8)/16)*100);
+  return {code, pcts, d};
+}
+
+function finish(){
+  const r = calc();
+  renderResult(r.code, r.pcts, r.d);
+  const p = r.pcts.map(x=>String(x).padStart(2,"0")).join("");
+  history.replaceState(null,"",`?t=${r.code}&p=${p}&d=${r.d}`);
+  show("scr-result");
+}
+
+/* ================= 結果表示 ================= */
+
+let current = null; // {code,pcts,d} 共有画像用
+
+function doutanTitle(d){
+  for(const [min,title] of DOUTAN_TITLES){ if(d>=min) return title; }
+  return DOUTAN_TITLES[DOUTAN_TITLES.length-1][1];
+}
+
+function renderResult(code, pcts, d){
+  const t = TYPES[code];
+  if(!t) return;
+  current = {code, pcts, d};
+
+  $("rcode").textContent = code.split("").join(" ");
+  $("rname").textContent = t.name;
+  $("rcopy").textContent = t.copy;
+  $("rdesc").textContent = t.desc;
+
+  const axes = $("axes");
+  axes.innerHTML = "";
+  AXES.forEach((a,i)=>{
+    const p = pcts[i];
+    const div = document.createElement("div");
+    div.className = "axis";
+    div.innerHTML =
+      `<div class="lbl"><span class="l">${a.labels[0]} ${p}%</span>`+
+      `<span class="r">${a.labels[1]} ${100-p}%</span></div>`+
+      `<div class="bar"><i style="width:${p}%"></i></div>`;
+    axes.appendChild(div);
+  });
+
+  $("dpct").textContent = d+"%";
+  $("dtitle").textContent = doutanTitle(d);
+  $("dbar").style.width = d+"%";
+
+  $("aisho").innerHTML =
+    `相性◎のタイプ: <b>${t.ai[0]}「${t.ai[1]}」</b><br>${t.ai[2]}`;
+}
+
+/* ================= シェア ================= */
+
+function shareUrl(){
+  const {code,pcts,d} = current;
+  const p = pcts.map(x=>String(x).padStart(2,"0")).join("");
+  return `${location.origin}${location.pathname}?t=${code}&p=${p}&d=${d}`;
+}
+
+function shareX(){
+  const t = TYPES[current.code];
+  const text =
+    `私は「${t.name}」(${current.code}) でした!\n`+
+    `同担拒否度: ${current.d}% ${doutanTitle(current.d)}\n`+
+    `#推し活16タイプ診断\n`;
+  const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl())}`;
+  window.open(url,"_blank");
+}
+
+/* 結果画像生成(1080x1080) */
+async function saveImage(){
+  await document.fonts.ready;
+  const {code,pcts,d} = current;
+  const t = TYPES[code];
+  const cv = $("cv"), ctx = cv.getContext("2d");
+  const W = 1080, H = 1080;
+  const oshi = oshiColor;
+
+  // 背景
+  ctx.fillStyle = "#0e0b1a";
+  ctx.fillRect(0,0,W,H);
+  const g = ctx.createRadialGradient(W/2,-100,50, W/2,-100,900);
+  g.addColorStop(0, oshi+"55");
+  g.addColorStop(1, "transparent");
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,W,H);
+
+  // 枠
+  ctx.strokeStyle = oshi;
+  ctx.lineWidth = 4;
+  ctx.strokeRect(40,40,W-80,H-80);
+
+  ctx.textAlign = "center";
+
+  // ヘッダ
+  ctx.fillStyle = "#8d86a8";
+  ctx.font = "700 26px 'Zen Kaku Gothic New'";
+  ctx.fillText("推 し 活 16 タ イ プ 診 断", W/2, 130);
+
+  // コード
+  ctx.fillStyle = oshi;
+  ctx.font = "700 34px 'Zen Kaku Gothic New'";
+  ctx.fillText(code.split("").join("  "), W/2, 205);
+
+  // タイプ名
+  ctx.fillStyle = "#f2effa";
+  ctx.shadowColor = oshi; ctx.shadowBlur = 30;
+  ctx.font = "72px 'Dela Gothic One'";
+  ctx.fillText(t.name, W/2, 300);
+  ctx.shadowBlur = 0;
+
+  // コピー
+  ctx.fillStyle = oshi;
+  ctx.font = "700 30px 'Zen Kaku Gothic New'";
+  ctx.fillText(t.copy, W/2, 365);
+
+  // 軸バー
+  const barX = 140, barW = W-280, barH = 18;
+  let y = 450;
+  ctx.textAlign = "left";
+  AXES.forEach((a,i)=>{
+    const p = pcts[i];
+    ctx.fillStyle = "#f2effa";
+    ctx.font = "700 26px 'Zen Kaku Gothic New'";
+    ctx.fillText(`${a.labels[0]} ${p}%`, barX, y);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#8d86a8";
+    ctx.fillText(`${a.labels[1]} ${100-p}%`, barX+barW, y);
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#241c40";
+    roundRect(ctx, barX, y+14, barW, barH, 9); ctx.fill();
+    ctx.fillStyle = oshi;
+    roundRect(ctx, barX, y+14, Math.max(barW*p/100, barH), barH, 9); ctx.fill();
+    y += 84;
+  });
+
+  // 同担拒否度
+  y += 6;
+  ctx.fillStyle = "#8d86a8";
+  ctx.font = "700 26px 'Zen Kaku Gothic New'";
+  ctx.fillText("同担拒否度", barX, y);
+  ctx.fillStyle = oshi;
+  ctx.font = "56px 'Dela Gothic One'";
+  ctx.fillText(`${d}%`, barX, y+66);
+  ctx.fillStyle = "#f2effa";
+  ctx.font = "700 30px 'Zen Kaku Gothic New'";
+  ctx.fillText(doutanTitle(d), barX+170, y+62);
+  ctx.fillStyle = "#241c40";
+  roundRect(ctx, barX, y+90, barW, barH, 9); ctx.fill();
+  ctx.fillStyle = oshi;
+  roundRect(ctx, barX, y+90, Math.max(barW*d/100, barH), barH, 9); ctx.fill();
+
+  // フッタ
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#8d86a8";
+  ctx.font = "700 24px 'Zen Kaku Gothic New'";
+  ctx.fillText("#推し活16タイプ診断", W/2, H-90);
+
+  // ダウンロード
+  const a = document.createElement("a");
+  a.download = `oshikatsu_${code}.png`;
+  a.href = cv.toDataURL("image/png");
+  a.click();
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+/* ================= URL直リンク(シェアされた結果) ================= */
+
+function tryLoadFromUrl(){
+  const q = new URLSearchParams(location.search);
+  const code = q.get("t"), p = q.get("p"), d = q.get("d");
+  if(!code || !TYPES[code] || !p || p.length!==8 || d===null) return false;
+  const pcts = [0,1,2,3].map(i=>{
+    const n = parseInt(p.slice(i*2,i*2+2),10);
+    return isNaN(n) ? 50 : Math.min(100,Math.max(0,n));
+  });
+  const dv = Math.min(100,Math.max(0,parseInt(d,10)||0));
+  renderResult(code, pcts, dv);
+  $("btn-x").style.display = "none"; // 他人の結果はシェアさせない
+  $("btn-retry").textContent = "自分も診断してみる";
+  show("scr-result");
+  return true;
+}
+
+/* ================= イベント ================= */
+
+initSwatches();
+$("btn-start").onclick = startQuiz;
+document.querySelectorAll(".ans").forEach(b=>{
+  b.onclick = ()=>answer(parseInt(b.dataset.v,10));
+});
+$("btn-back").onclick = ()=>{ if(cur>0){ cur--; renderQ(); } };
+$("btn-x").onclick = shareX;
+$("btn-img").onclick = saveImage;
+$("btn-retry").onclick = ()=>{
+  history.replaceState(null,"",location.pathname);
+  $("btn-x").style.display = "";
+  $("btn-retry").textContent = "もう一度診断する";
+  show("scr-start");
+};
+tryLoadFromUrl();
+</script>
+</body>
+</html>
