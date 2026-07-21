@@ -8,10 +8,19 @@
 <meta property="og:title" content="推し活16タイプ診断">
 <meta property="og:description" content="24問・約2分で、あなたの推し方タイプと同担拒否度がわかる。">
 <meta property="og:type" content="website">
+<meta property="og:image" content="og.png">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- ═══ 計測タグ貼り付け位置 ここから ═══
+     Cloudflare Web Analytics のビーコンタグをここに貼る。
+     未設定でも診断は正常に動作する。
+     例: <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+                data-cf-beacon='{"token": "取得したトークン"}'></script>
+     ═══ 計測タグ貼り付け位置 ここまで ═══ -->
+
 <style>
 :root{
   --bg:#0e0b1a;
@@ -70,6 +79,7 @@ h1{
   font-family:inherit;font-size:17px;font-weight:700;cursor:pointer;
   box-shadow:0 6px 28px color-mix(in srgb, var(--oshi) 50%, transparent);
   transition:transform .12s;
+  text-align:center;text-decoration:none;
 }
 .btn:active{transform:scale(.97)}
 .btn.ghost{background:transparent;color:var(--text);border:1.5px solid var(--line);box-shadow:none}
@@ -190,7 +200,9 @@ footer{margin-top:44px;text-align:center;font-size:11px;color:var(--muted)}
       <button class="btn" id="btn-x">Xで結果をシェア</button>
       <button class="btn ghost" id="btn-img">結果画像を保存</button>
       <button class="btn ghost" id="btn-retry">もう一度診断する</button>
+      <a class="btn ghost" href="renai/?from=oshi">恋愛版もやってみる →</a>
     </div>
+    <p class="note">画像を保存してポストに添付すると、結果がそのまま表示されます。</p>
     <footer>#推し活16タイプ診断</footer>
   </section>
 
@@ -344,6 +356,28 @@ function shuffle(a){
   return a;
 }
 
+/* ================= 計測(任意・未設定なら何も送信しない) ================= */
+/* Supabase に記録する場合のみ url / key を埋める。恋愛版と同じテーブルを使う。
+   送信するのは タイプ・同担拒否度・流入元 のみ。個人情報は送らない。 */
+const LOG = { url:"", key:"" };
+const REF = new URLSearchParams(location.search).get("from") || "";
+
+async function track(kind, data){
+  if(!LOG.url || !LOG.key) return;
+  try{
+    await fetch(LOG.url.replace(/\/+$/,"") + "/rest/v1/shindan_log", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        apikey: LOG.key,
+        Authorization:"Bearer " + LOG.key,
+        Prefer:"return=minimal"
+      },
+      body: JSON.stringify(Object.assign({ app:"oshi", kind:kind }, data || {}))
+    });
+  }catch(e){ /* 計測失敗は診断の動作に影響させない */ }
+}
+
 /* ================= 診断フロー ================= */
 
 function startQuiz(){
@@ -352,6 +386,7 @@ function startQuiz(){
   cur = 0;
   renderQ();
   show("scr-quiz");
+  track("start", { ref: REF });
 }
 
 function renderQ(){
@@ -402,6 +437,7 @@ function finish(){
   const p = r.pcts.map(x=>String(x).padStart(2,"0")).join("");
   history.replaceState(null,"",`?t=${r.code}&p=${p}&d=${r.d}`);
   show("scr-result");
+  track("done", { type: r.code, weight: r.d, ref: REF });
 }
 
 /* ================= 結果表示 ================= */
