@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>恋愛16タイプ診断</title>
+<meta name="description" content="24問・約2分。あなたの恋愛タイプと「愛の重さ」がわかる性格診断。">
+<meta property="og:title" content="恋愛16タイプ診断">
+<meta property="og:description" content="24問・約2分で、あなたの恋愛タイプと「愛の重さ」がわかる。">
+<meta property="og:type" content="website">
+<meta property="og:image" content="og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="og.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- ═══ 計測タグ貼り付け位置 ここから ═══
+     Cloudflare Web Analytics のビーコンタグをここに貼る。
+     未設定でも診断は正常に動作する。
+     例: <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+                data-cf-beacon='{"token": "取得したトークン"}'></script>
+     ═══ 計測タグ貼り付け位置 ここまで ═══ -->
+
+<style>
+:root{
+  --bg:#0e0b1a;
+  --card:#1a1530;
+  --card2:#241c40;
+  --text:#f2effa;
+  --muted:#8d86a8;
+  --line:#332a55;
+  --oshi:#ff4d9e;
+  --radius:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN",sans-serif;
+  min-height:100svh;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in srgb, var(--oshi) 18%, transparent), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 110%, color-mix(in srgb, var(--oshi) 10%, transparent), transparent);
+  transition:background-image .4s;
+}
+.wrap{max-width:520px;margin:0 auto;padding:28px 20px 64px}
+.screen{display:none}
+.screen.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.screen.active{animation:none}}
+
+.eyebrow{font-size:12px;letter-spacing:.24em;color:var(--oshi);font-weight:700;text-align:center;margin-bottom:14px}
+h1{
+  font-family:"Dela Gothic One",sans-serif;
+  font-size:clamp(30px,9vw,44px);
+  line-height:1.25;text-align:center;font-weight:400;
+  text-shadow:0 0 24px color-mix(in srgb, var(--oshi) 45%, transparent);
+}
+.sub{text-align:center;color:var(--muted);font-size:14px;margin-top:14px;line-height:1.9}
+.colorpick{margin-top:36px}
+.colorpick p{font-size:13px;font-weight:700;text-align:center;margin-bottom:14px}
+.swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;justify-items:center}
+.swatch{
+  width:46px;height:46px;border-radius:50%;border:3px solid transparent;
+  cursor:pointer;transition:transform .15s;
+  box-shadow:0 0 14px color-mix(in srgb, var(--c) 55%, transparent);
+  background:var(--c);
+}
+.swatch:active{transform:scale(.92)}
+.swatch[aria-pressed="true"]{border-color:#fff;transform:scale(1.12)}
+.btn{
+  display:block;width:100%;margin-top:34px;padding:18px;
+  background:var(--oshi);color:#fff;border:none;border-radius:999px;
+  font-family:inherit;font-size:17px;font-weight:700;cursor:pointer;text-align:center;
+  text-decoration:none;
+  box-shadow:0 6px 28px color-mix(in srgb, var(--oshi) 50%, transparent);
+  transition:transform .12s;
+}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1.5px solid var(--line);box-shadow:none}
+.note{margin-top:16px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.8}
+
+.progress-row{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.qcount{font-size:13px;font-weight:700;color:var(--oshi);min-width:56px}
+.bar{flex:1;height:8px;background:var(--card2);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--oshi);border-radius:99px;transition:width .25s;box-shadow:0 0 10px var(--oshi)}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:30px 24px;min-height:150px;display:flex;align-items:center}
+.qtext{font-size:18px;font-weight:700;line-height:1.75}
+.answers{display:grid;gap:12px;margin-top:24px}
+.ans{
+  padding:16px;border-radius:14px;border:1.5px solid var(--line);
+  background:var(--card);color:var(--text);font-family:inherit;
+  font-size:15px;font-weight:500;cursor:pointer;text-align:center;
+  transition:border-color .15s, background .15s, transform .1s;
+}
+.ans:active{transform:scale(.98)}
+.ans:hover{border-color:var(--oshi)}
+.back{margin-top:22px;background:none;border:none;color:var(--muted);font-family:inherit;font-size:13px;cursor:pointer;padding:8px}
+
+.rcard{
+  background:linear-gradient(160deg, var(--card2), var(--card));
+  border:1px solid color-mix(in srgb, var(--oshi) 55%, var(--line));
+  border-radius:22px;padding:32px 24px;
+  box-shadow:0 0 40px color-mix(in srgb, var(--oshi) 22%, transparent);
+}
+.rlabel{font-size:11px;letter-spacing:.22em;color:var(--muted);text-align:center;font-weight:700}
+.emblem{
+  width:132px;height:132px;margin:18px auto 4px;
+  display:flex;align-items:center;justify-content:center;
+  filter:drop-shadow(0 0 12px color-mix(in srgb, var(--oshi) 65%, transparent));
+}
+.emblem svg,.emblem img{width:100%;height:100%;object-fit:contain}
+.rcode{text-align:center;font-size:14px;font-weight:700;color:var(--oshi);letter-spacing:.35em;margin-top:10px}
+.rname{
+  font-family:"Dela Gothic One",sans-serif;font-weight:400;
+  font-size:clamp(26px,7.6vw,34px);text-align:center;line-height:1.4;margin-top:6px;
+  text-shadow:0 0 20px color-mix(in srgb, var(--oshi) 40%, transparent);
+}
+.rcopy{text-align:center;color:var(--oshi);font-size:14px;font-weight:700;margin-top:12px}
+.rdesc{font-size:14px;line-height:2;color:var(--text);margin-top:18px}
+.axes{margin-top:26px;display:grid;gap:14px}
+.axis .lbl{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:6px}
+.axis .lbl .l{color:var(--text)} .axis .lbl .r{color:var(--muted)}
+.axis .bar{height:10px}
+.weight{
+  margin-top:26px;padding:18px;border-radius:14px;
+  background:color-mix(in srgb, var(--oshi) 10%, var(--card));
+  border:1px dashed color-mix(in srgb, var(--oshi) 50%, var(--line));
+}
+.weight .t{font-size:12px;font-weight:700;color:var(--muted)}
+.weight .v{display:flex;align-items:baseline;gap:10px;margin-top:6px;flex-wrap:wrap}
+.weight .pct{font-family:"Dela Gothic One",sans-serif;font-size:34px;color:var(--oshi)}
+.weight .title{font-size:15px;font-weight:700}
+.aisho{margin-top:22px;font-size:13.5px;line-height:1.9;color:var(--muted)}
+.aisho b{color:var(--text)}
+.share{margin-top:30px;display:grid;gap:12px}
+canvas{display:none}
+footer{margin-top:44px;text-align:center;font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="screen active" id="scr-start">
+    <p class="eyebrow">RENAI 16 TYPES</p>
+    <h1>恋愛<br>16タイプ診断</h1>
+    <p class="sub">24問・約2分。<br>あなたの恋愛タイプと<br>「愛の重さ」がわかる。</p>
+    <div class="colorpick">
+      <p>あなたのテーマカラーを選んでスタート</p>
+      <div class="swatches" id="swatches"></div>
+    </div>
+    <button class="btn" id="btn-start">診断をはじめる</button>
+    <p class="note">結果はいつでもXでシェアできます。<br>回答内容は端末内で処理され、個人情報は一切送信されません。</p>
+  </section>
+
+  <section class="screen" id="scr-quiz">
+    <div class="progress-row">
+      <span class="qcount" id="qcount">1 / 24</span>
+      <div class="bar"><i id="pbar"></i></div>
+    </div>
+    <div class="qcard"><p class="qtext" id="qtext"></p></div>
+    <div class="answers">
+      <button class="ans" data-v="2">かなりあてはまる</button>
+      <button class="ans" data-v="1">ややあてはまる</button>
+      <button class="ans" data-v="-1">あまりあてはまらない</button>
+      <button class="ans" data-v="-2">まったくあてはまらない</button>
+    </div>
+    <button class="back" id="btn-back">← ひとつ前に戻る</button>
+  </section>
+
+  <section class="screen" id="scr-result">
+    <div class="rcard">
+      <p class="rlabel">あなたの恋愛タイプ</p>
+      <div class="emblem" id="emblem"></div>
+      <p class="rcode" id="rcode"></p>
+      <p class="rname" id="rname"></p>
+      <p class="rcopy" id="rcopy"></p>
+      <p class="rdesc" id="rdesc"></p>
+      <div class="axes" id="axes"></div>
+      <div class="weight">
+        <p class="t">愛の重さ</p>
+        <div class="v"><span class="pct" id="wpct"></span><span class="title" id="wtitle"></span></div>
+        <div class="bar" style="margin-top:10px"><i id="wbar" style="width:0"></i></div>
+      </div>
+      <p class="aisho" id="aisho"></p>
+    </div>
+    <div class="share">
+      <button class="btn" id="btn-x">Xで結果をシェア</button>
+      <button class="btn ghost" id="btn-img">結果画像を保存</button>
+      <button class="btn ghost" id="btn-retry">もう一度診断する</button>
+      <a class="btn ghost" href="../?from=renai">推し活版もやってみる →</a>
+    </div>
+    <p class="note">画像を保存してポストに添付すると、結果がそのまま表示されます。</p>
+    <footer>#恋愛16タイプ診断</footer>
+  </section>
+
+</div>
+<canvas id="cv" width="1080" height="1350"></canvas>
+
+<script>
+"use strict";
+
+/* ═════════ 計測(任意・未設定なら何も送信しない) ═════════
+   Supabase に結果を1行だけ記録する場合、下の url / key を埋める。
+   送信するのは タイプ・愛の重さ・流入元 のみ。個人情報は送らない。
+
+   テーブル作成SQL(Supabase SQL Editor で実行):
+   ------------------------------------------------------------
+   create table public.shindan_log (
+     id         bigint generated always as identity primary key,
+     app        text not null,
+     kind       text not null,
+     type       text,
+     weight     int,
+     ref        text,
+     created_at timestamptz not null default now()
+   );
+   alter table public.shindan_log enable row level security;
+   create policy "anon insert only" on public.shindan_log
+     for insert to anon with check (true);
+   ------------------------------------------------------------
+   ※ INSERT のみ許可。SELECT を開けないこと(anonキーは公開されるため)
+*/
+const LOG = { url:"", key:"" };
+
+async function track(kind, data){
+  if(!LOG.url || !LOG.key) return;
+  try{
+    await fetch(LOG.url.replace(/\/+$/,"") + "/rest/v1/shindan_log", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        apikey: LOG.key,
+        Authorization:"Bearer " + LOG.key,
+        Prefer:"return=minimal"
+      },
+      body: JSON.stringify(Object.assign({ app:"renai", kind:kind }, data || {}))
+    });
+  }catch(e){ /* 計測失敗は診断の動作に影響させない */ }
+}
+
+/* ═════════ データ ═════════ */
+
+const THEME_COLORS = [
+  ["赤","#ff3b5c"],["ピンク","#ff4d9e"],["オレンジ","#ff8a3d"],["黄","#ffd23f"],["緑","#3ddc84"],
+  ["水色","#3ec9ff"],["青","#4d6bff"],["紫","#a55bff"],["白","#e9e9f2"],["黒","#9aa0b4"]
+];
+
+/* axis: AM(攻め/待ち) DY(刺激/安心) SK(直球/察して) IH(一途/惚れっぽい) W(愛の重さ) */
+const QUESTIONS = [
+  {t:"気になる人ができたら、自分から連絡先を聞きにいくほうだ", axis:"AM", dir:"A", rep:true},
+  {t:"好きになっても、相手から来てくれるのを待ってしまう", axis:"AM", dir:"M"},
+  {t:"思い返すと、恋の始まりはだいたい自分から仕掛けている", axis:"AM", dir:"A"},
+  {t:"告白は「するもの」ではなく「されるもの」だと思う", axis:"AM", dir:"M"},
+  {t:"アタックして振られるより、何もしないまま終わるほうが怖い", axis:"AM", dir:"A"},
+
+  {t:"先が読めない恋ほど、燃えるものはない", axis:"DY", dir:"D", rep:true},
+  {t:"ドキドキする人より、一緒にいて落ち着く人を選びたい", axis:"DY", dir:"Y"},
+  {t:"「いい人なんだけど、刺激がない」で冷めたことがある", axis:"DY", dir:"D"},
+  {t:"記念日のサプライズより、毎日の「おやすみ」の連絡のほうが嬉しい", axis:"DY", dir:"Y"},
+  {t:"ちょっと困った人ほど、なぜか気になってしまう", axis:"DY", dir:"D"},
+
+  {t:"「好き」は、言葉にしないと伝わらないと思っている", axis:"SK", dir:"S", rep:true},
+  {t:"好意は、言葉より態度で気づいてほしい", axis:"SK", dir:"K"},
+  {t:"気持ちを聞かれたら、ごまかさずそのまま答えるほうだ", axis:"SK", dir:"S"},
+  {t:"本命の前ほど、なぜか素直になれなくなる", axis:"SK", dir:"K"},
+  {t:"駆け引きは苦手。思ったことがすぐ顔に出る", axis:"SK", dir:"S"},
+
+  {t:"一度好きになったら、気持ちは簡単には動かない", axis:"IH", dir:"I", rep:true},
+  {t:"「いいな」と思う人は、正直いつも複数いる", axis:"IH", dir:"H"},
+  {t:"過去の恋を、人より長く引きずるほうだ", axis:"IH", dir:"I"},
+  {t:"恋の入り口は広い。きっかけがあればすぐ落ちる", axis:"IH", dir:"H"},
+  {t:"「運命の人はひとりだけ」という考えに、わりと本気で頷ける", axis:"IH", dir:"I"},
+
+  {t:"返信が遅いと、既読がつくまで何度も画面を見てしまう", axis:"W", dir:"R"},
+  {t:"恋人がいても、お互いの自由な時間は最優先で確保したい", axis:"W", dir:"L"},
+  {t:"「あなたのためにここまでした」が、気づくと積み上がっている", axis:"W", dir:"R"},
+  {t:"恋愛は人生の一部であって、全部ではないと思う", axis:"W", dir:"L"}
+];
+
+const AXES = [
+  {key:"AM", first:"A", labels:["攻め","待ち"]},
+  {key:"DY", first:"D", labels:["刺激","安心"]},
+  {key:"SK", first:"S", labels:["直球","察して"]},
+  {key:"IH", first:"I", labels:["一途","惚れっぽい"]}
+];
+
+const TYPES = {
+  ADSI:{name:"恋の弾丸特急", copy:"狙いを定めたら、一直線。",
+    desc:"好きになった瞬間からゴールしか見ていない、恋の最短ルート走行型。駆け引きゼロの全力アタックは、相手からすれば嵐みたいなもの。でもその迷いのなさが、一番の武器です。",
+    ai:["MYSI","実家のような安心感","突っ走るあなたの、帰る場所になる人。"]},
+  ADSH:{name:"恋の永久機関", copy:"恋してない時期、ほぼない。",
+    desc:"攻めて、燃えて、口説いて、気づけばまた恋してる。恋愛のエンジンが常時稼働している天性のプレイヤー。熱量は毎回本物なので、燃料切れという概念がない。",
+    ai:["MYKH","春の日だまり","あなたの嵐を、ふわっと受け止める人。"]},
+  ADKI:{name:"駆け引きの棋士", copy:"その一手にも、意味がある。",
+    desc:"攻めるけど直球は投げない、盤面を読みながら距離を詰める頭脳派。既読のタイミングまで計算するのに、想いはずっとひとりに一途。長期戦、むしろ望むところ。",
+    ai:["MDSI","受け身の火薬庫","あなたの仕掛けに、全力で応えてくれる人。"]},
+  ADKH:{name:"魔性の免許皆伝", copy:"落とし方なら、心得てます。",
+    desc:"自然に距離を詰めて、気づかせないうちに落とす天性の魔性。悪気なく人を惹きつけるので、恋の現場が常に複数ある。本人に自覚がないパターンが一番強い。",
+    ai:["MYSI","実家のような安心感","魔性のあなたが、素に戻れる人。"]},
+  AYSI:{name:"歩く婚姻届", copy:"3回目のデートで、将来の話。",
+    desc:"恋の入り口から出口(=結婚)までの地図を持ってる安定志向の突撃隊。好きになったら囲い込みではなく正面から「将来どう考えてる?」と聞ける誠実さが持ち味。",
+    ai:["MDKI","両想い未遂の常習犯","あなたの直球が、一番の救いになる人。"]},
+  AYSH:{name:"世話焼きの親分", copy:"惚れた相手は、全員幸せにしたい。",
+    desc:"気になる人ができるとまず尽くす、面倒見の塊。愛情表現が「世話」なので、恋と親切の境界線が本人にも曖昧。周りに慕われるが、本命に気づかれにくいのが玉に瑕。",
+    ai:["MDSH","流され上手の漂流者","あなたの世話を、素直に全部受け取る人。"]},
+  AYKI:{name:"外堀埋め職人", copy:"気づいた時には、囲まれている。",
+    desc:"本人には直接言わず、共通の友人・行きつけの店・生活圏から静かに固めていく長期戦略型。焦らない、揺らがない、逃さない。その執念、もはや職人技です。",
+    ai:["MYKI","無言の湯たんぽ","あなたの静かな戦略に、静かに気づいてる人。"]},
+  AYKH:{name:"優しさの炊き出し", copy:"大鍋いっぱい、誰にでも。",
+    desc:"誰にでも安心を配ってしまう、開かれた包容力の持ち主。優しさの間口が広いので、恋の入り口も自然と多くなる。あなたを好きになった人、把握してるより多いです。",
+    ai:["ADKI","駆け引きの棋士","あなたの優しさを、独占しにくる人。"]},
+  MDSI:{name:"受け身の火薬庫", copy:"着火したら、誰よりも燃える。",
+    desc:"自分からは動かない。でも一度火がつくと、その熱量は攻め型の比じゃない。普段が静かなぶん、恋に落ちた時の振り幅で周囲を驚かせる隠れ情熱型。",
+    ai:["ADKI","駆け引きの棋士","あなたに火をつける方法を、研究してる人。"]},
+  MDSH:{name:"流され上手の漂流者", copy:"押しに弱い。でも毎回、本気。",
+    desc:"アプローチされると断れない、恋の海の漂流者。流されてるようで、その時々の恋にはちゃんと本気。「気づいたら付き合ってた」の回数、たぶん平均の3倍です。",
+    ai:["AYSH","世話焼きの親分","漂流するあなたの、港になる人。"]},
+  MDKI:{name:"両想い未遂の常習犯", copy:"言えばよかった、が積み重なる。",
+    desc:"察してほしくて言えなくて、ドキドキだけが募っていく切なさ製造機。あと一歩が踏み出せずに終わった恋、両手で数えられないのでは。その慎重さは、裏を返せば誠実さです。",
+    ai:["AYSI","歩く婚姻届","あなたの「言えない」を、先回りして聞いてくれる人。"]},
+  MDKH:{name:"脳内恋愛の興行主", copy:"妄想の中では、もう付き合ってる。",
+    desc:"現実で動く前に、脳内で恋が始まって完結する想像力の持ち主。好きになるのは早い、でも動かない。あなたの頭の中、実は界隈で一番ドラマチックです。",
+    ai:["ADSH","恋の永久機関","脳内の恋を、現実に引きずり出す人。"]},
+  MYSI:{name:"実家のような安心感", copy:"何も起きない。それが最高。",
+    desc:"待つし、尽くすし、裏切らない。ドラマチックさとは無縁だけど、一緒にいる人の睡眠の質を上げるタイプ。恋愛の最終回で選ばれるのは、だいたいあなたです。",
+    ai:["ADSI","恋の弾丸特急","あなたの静けさに、突っ込んでくる人。"]},
+  MYSH:{name:"隣の席の幼なじみ", copy:"気づいたら、そばにいる。",
+    desc:"自分からは動かないのに、なぜかいつも誰かの近くにいる自然体の人たらし。裏表のない直球コミュニケーションで、恋の種を無自覚に蒔きまくっている。",
+    ai:["MDKI","両想い未遂の常習犯","あなたの隣で、ずっとドキドキしてる人。"]},
+  MYKI:{name:"無言の湯たんぽ", copy:"言わない。でも、ずっと温かい。",
+    desc:"好意を言葉にしない代わりに、行動の端々に体温がにじむタイプ。気づく人だけが気づく、じんわり型の一途。その温もり、失ってから気づかれがちなのが唯一の難点。",
+    ai:["AYKI","外堀埋め職人","あなたの体温に、ちゃんと気づいてる人。"]},
+  MYKH:{name:"春の日だまり", copy:"争いのない場所に、恋が生まれる。",
+    desc:"ふわっと誰でも受け入れる、恋愛界の非武装地帯。激しさとは無縁だけど、居心地の良さで人が離れない。恋の始まりも終わりも、いつも穏やかです。",
+    ai:["ADSH","恋の永久機関","日だまりのあなたに、転がり込んでくる人。"]}
+};
+
+const WEIGHT_TITLES = [
+  [85,"ブラックホール(重すぎて光も逃げられない)"],
+  [60,"木星の重力(標準の約2.5倍)"],
+  [40,"地球の重力(ちょうどいい)"],
+  [15,"月の重力(ふわっと軽い)"],
+  [0,"無重力(束縛という概念がない)"]
+];
+
+/* ═════════ エンブレム(単色線画・viewBox 0 0 200 200) ═════════ */
+const EMBLEMS = {
+  /* 弾丸特急 */
+  ADSI:'<path d="M70 152V92c0-32 12-46 30-46s30 14 30 46v60z"/><path d="M80 86h40v24H80z"/>'+
+       '<circle cx="86" cy="132" r="7"/><circle cx="114" cy="132" r="7"/><path d="M62 164h76"/>'+
+       '<path d="M34 74h22M28 100h18M144 74h22M154 100h18"/>',
+  /* 永久機関=歯車+ハート */
+  ADSH:'<circle cx="100" cy="100" r="48"/>'+
+       '<path d="M148 100h12M100 148v12M52 100H40M100 52V40M134 134l8 8M66 134l-8 8M66 66l-8-8M134 66l8-8"/>'+
+       '<path d="M100 122 82 104a12.7 12.7 0 1 1 18-18 12.7 12.7 0 1 1 18 18z"/>',
+  /* 棋士=駒+盤 */
+  ADKI:'<path d="M100 40 134 60 126 132H74L66 60z"/><path d="M82 88h36M84 106h32"/>'+
+       '<path d="M36 148h128v34H36z"/><path d="M79 148v34M122 148v34M36 165h128"/>',
+  /* 免許皆伝=巻物+印 */
+  ADKH:'<path d="M46 50h108a8 8 0 0 1 0 16H46a8 8 0 0 1 0-16z"/>'+
+       '<path d="M46 136h108a8 8 0 0 1 0 16H46a8 8 0 0 1 0-16z"/>'+
+       '<path d="M58 66v70M142 66v70"/><path d="M72 88h56M72 106h40"/>'+
+       '<circle cx="124" cy="118" r="13"/>'+
+       '<path d="M124 124 117 117a4.95 4.95 0 1 1 7-7 4.95 4.95 0 1 1 7 7z"/>',
+  /* 婚姻届=書類+判子+足 */
+  AYSI:'<path d="M56 30h88v122H56z"/><path d="M72 60h56M72 80h56M72 100h34"/>'+
+       '<circle cx="122" cy="120" r="15"/>'+
+       '<path d="M122 127 115 120a4.95 4.95 0 1 1 7-7 4.95 4.95 0 1 1 7 7z"/>'+
+       '<path d="M80 152v16M120 152v16M72 168h14M114 168h14"/>',
+  /* 親分=傘で守る */
+  AYSH:'<path d="M40 104a60 60 0 0 1 120 0"/>'+
+       '<path d="M40 104q15 16 30 0 15 16 30 0 15 16 30 0 15 16 30 0"/>'+
+       '<path d="M100 104v46a12 12 0 0 1-24 0"/>'+
+       '<path d="M66 134 60 128a4.24 4.24 0 1 1 6-6 4.24 4.24 0 1 1 6 6z"/>'+
+       '<path d="M134 134 128 128a4.24 4.24 0 1 1 6-6 4.24 4.24 0 1 1 6 6z"/>',
+  /* 外堀=城+堀+スコップ */
+  AYKI:'<path d="M72 148h56v-44H72z"/><path d="M62 104 100 78l38 26"/>'+
+       '<path d="M86 78h28V60H86z"/><path d="M78 60 100 44l22 16"/>'+
+       '<path d="M92 120h16v20H92z"/><path d="M34 172q66-20 132 0"/>'+
+       '<path d="M44 116v22M38 138h12v16H38z"/>',
+  /* 炊き出し=大鍋+おたま+湯気 */
+  AYKH:'<path d="M52 108h96l-10 52H62z"/><path d="M44 108h112"/><path d="M44 116H30M156 116h14"/>'+
+       '<path d="M136 40 126 88"/><path d="M114 88a12 10 0 0 0 24 0"/>'+
+       '<path d="M68 92q10-13 0-26 -10-13 0-26"/><path d="M92 88q10-13 0-26 -10-13 0-26"/>',
+  /* 火薬庫=樽+導火線+火花 */
+  MDSI:'<path d="M68 82c-8 30-8 46 0 68h64c8-22 8-38 0-68z"/><path d="M60 104h80M60 128h80"/>'+
+       '<path d="M100 82q4-20 24-28"/>'+
+       '<path d="M132 40v-12M124 46l-10-6M140 46l10-6M126 32l-6-10M138 32l6-10"/>',
+  /* 漂流者=舟+人+波 */
+  MDSH:'<path d="M56 112h88l-16 26H72z"/><path d="M100 112V84"/><circle cx="100" cy="74" r="10"/>'+
+       '<path d="M28 152q16-14 32 0 16 14 32 0 16-14 32 0 16 14 32 0"/>'+
+       '<path d="M28 174q16-14 32 0 16 14 32 0 16-14 32 0 16 14 32 0"/>',
+  /* 両想い未遂=あと少しで繋がらないハート */
+  MDKI:'<path d="M94 146 64 116A21.2 21.2 0 1 1 94 86z"/>'+
+       '<path d="M114 146V86a21.2 21.2 0 1 1 30 30z"/>'+
+       '<path d="M104 92v8M104 108v8M104 124v8"/>',
+  /* 脳内劇場=頭+舞台 */
+  MDKH:'<circle cx="100" cy="96" r="54"/><path d="M84 148v20h32v-20"/>'+
+       '<path d="M64 72h72"/><path d="M70 76q8 22 0 44M130 76q-8 22 0 44"/><path d="M70 124h60"/>'+
+       '<path d="M100 116 94 110a4.24 4.24 0 1 1 6-6 4.24 4.24 0 1 1 6 6z"/>',
+  /* 実家=家+煙 */
+  MYSI:'<path d="M52 108 100 70l48 38"/><path d="M64 108v54h72v-54"/><path d="M90 162v-30h20v30"/>'+
+       '<path d="M120 86V66h14v31"/><path d="M127 60q9-9 0-18 -9-9 0-18"/>'+
+       '<path d="M74 118h18v16H74z"/>',
+  /* 幼なじみ=机2つ+窓 */
+  MYSH:'<path d="M66 36h68v50H66z"/><path d="M100 36v50M66 61h68"/>'+
+       '<path d="M38 110h58M44 110v42M90 110v42M44 124h46"/>'+
+       '<path d="M104 110h58M110 110v42M156 110v42M110 124h46"/>',
+  /* 湯たんぽ */
+  MYKI:'<path d="M58 100h84a14 14 0 0 1 14 14v38a14 14 0 0 1-14 14H58a14 14 0 0 1-14-14v-38a14 14 0 0 1 14-14z"/>'+
+       '<path d="M58 122q10.5-8 21 0 10.5 8 21 0 10.5-8 21 0 10.5 8 21 0"/>'+
+       '<path d="M58 146q10.5-8 21 0 10.5 8 21 0 10.5-8 21 0 10.5 8 21 0"/>'+
+       '<path d="M90 100V84h20v16"/><path d="M86 84h28V72H86z"/>'+
+       '<path d="M78 62q8-10 0-20M122 62q8-10 0-20M100 56q8-10 0-20"/>',
+  /* 日だまり=太陽+芽 */
+  MYKH:'<circle cx="100" cy="72" r="30"/>'+
+       '<path d="M130 72h14M100 102v14M70 72H56M100 42V28M121 93l10 10M79 93l-10 10M79 51 69 41M121 51 131 41"/>'+
+       '<path d="M100 176v-40"/>'+
+       '<path d="M100 152c-20 2-27-8-27-22 15 0 25 7 27 22z"/>'+
+       '<path d="M100 160c20 2 27-8 27-22-15 0-25 7-27 22z"/>'+
+       '<path d="M52 176h96"/>'
+};
+
+function emblemMarkup(code, color, size){
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="'+size+'" height="'+size+'">'+
+         '<g fill="none" stroke="'+color+'" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">'+
+         (EMBLEMS[code]||'')+'</g></svg>';
+}
+
+/* ═════════ 状態 ═════════ */
+
+let order = [], answers = {}, cur = 0, current = null;
+let themeColor = THEME_COLORS[1][1];
+const REF = new URLSearchParams(location.search).get("from") || "";
+
+const $ = id => document.getElementById(id);
+const show = id => {
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $(id).classList.add("active");
+  window.scrollTo(0,0);
+};
+
+function initSwatches(){
+  const box = $("swatches");
+  THEME_COLORS.forEach(([name,hex],i)=>{
+    const b = document.createElement("button");
+    b.className = "swatch";
+    b.style.setProperty("--c",hex);
+    b.setAttribute("aria-label", name);
+    b.setAttribute("aria-pressed", i===1 ? "true" : "false");
+    b.onclick = ()=>{
+      document.querySelectorAll(".swatch").forEach(s=>s.setAttribute("aria-pressed","false"));
+      b.setAttribute("aria-pressed","true");
+      themeColor = hex;
+      document.documentElement.style.setProperty("--oshi",hex);
+      if(current) renderEmblem(current.code);
+    };
+    box.appendChild(b);
+  });
+}
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* ═════════ 診断フロー ═════════ */
+
+function startQuiz(){
+  order = shuffle([...QUESTIONS.keys()]);
+  answers = {}; cur = 0;
+  renderQ(); show("scr-quiz");
+  track("start", { ref: REF });
+}
+
+function renderQ(){
+  $("qcount").textContent = (cur+1)+" / "+order.length;
+  $("pbar").style.width = ((cur/order.length)*100)+"%";
+  $("qtext").textContent = QUESTIONS[order[cur]].t;
+  $("btn-back").style.visibility = cur===0 ? "hidden" : "visible";
+}
+
+function answer(v){
+  answers[order[cur]] = v;
+  if(cur < order.length-1){ cur++; renderQ(); } else finish();
+}
+
+function calc(){
+  const sums = {AM:0, DY:0, SK:0, IH:0};
+  let wSum = 0;
+  QUESTIONS.forEach((q,i)=>{
+    const v = answers[i] ?? 0;
+    if(q.axis==="W"){ wSum += (q.dir==="R" ? v : -v); return; }
+    const first = AXES.find(a=>a.key===q.axis).first;
+    sums[q.axis] += (q.dir===first ? v : -v);
+  });
+  let code = ""; const pcts = [];
+  AXES.forEach(a=>{
+    let s = sums[a.key];
+    if(s===0){
+      const repIdx = QUESTIONS.findIndex(q=>q.axis===a.key && q.rep);
+      s = (answers[repIdx] ?? 1) > 0 ? 1 : -1;
+    }
+    code += s>0 ? a.first : a.key.replace(a.first,"");
+    pcts.push(Math.round(((sums[a.key]+10)/20)*100));
+  });
+  return { code, pcts, w: Math.round(((wSum+8)/16)*100) };
+}
+
+function finish(){
+  const r = calc();
+  renderResult(r.code, r.pcts, r.w);
+  const p = r.pcts.map(x=>String(x).padStart(2,"0")).join("");
+  history.replaceState(null,"","?t="+r.code+"&p="+p+"&d="+r.w);
+  show("scr-result");
+  track("done", { type: r.code, weight: r.w, ref: REF });
+}
+
+/* ═════════ 結果表示 ═════════ */
+
+function weightTitle(w){
+  for(const [min,title] of WEIGHT_TITLES){ if(w>=min) return title; }
+  return WEIGHT_TITLES[WEIGHT_TITLES.length-1][1];
+}
+
+/* img/{コード}.png があればそれを、無ければ内蔵エンブレムを使う */
+function loadImg(src){
+  return new Promise((res,rej)=>{
+    const i = new Image();
+    i.onload = ()=>res(i);
+    i.onerror = rej;
+    i.src = src;
+  });
+}
+function typeVisual(code, color, px){
+  return loadImg("img/"+code+".png?v=1").catch(()=>
+    loadImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(emblemMarkup(code,color,px)))
+  );
+}
+function renderEmblem(code){
+  const box = $("emblem");
+  box.innerHTML = emblemMarkup(code, themeColor, 132);
+  loadImg("img/"+code+".png?v=1").then(img=>{
+    box.innerHTML = "";
+    img.alt = "";
+    box.appendChild(img);
+  }).catch(()=>{});
+}
+
+function renderResult(code, pcts, w){
+  const t = TYPES[code];
+  if(!t) return;
+  current = { code, pcts, w };
+
+  renderEmblem(code);
+  $("rcode").textContent = code.split("").join(" ");
+  $("rname").textContent = t.name;
+  $("rcopy").textContent = t.copy;
+  $("rdesc").textContent = t.desc;
+
+  const axes = $("axes");
+  axes.innerHTML = "";
+  AXES.forEach((a,i)=>{
+    const p = pcts[i];
+    const div = document.createElement("div");
+    div.className = "axis";
+    div.innerHTML =
+      '<div class="lbl"><span class="l">'+a.labels[0]+' '+p+'%</span>'+
+      '<span class="r">'+a.labels[1]+' '+(100-p)+'%</span></div>'+
+      '<div class="bar"><i style="width:'+p+'%"></i></div>';
+    axes.appendChild(div);
+  });
+
+  $("wpct").textContent = w+"%";
+  $("wtitle").textContent = weightTitle(w);
+  $("wbar").style.width = w+"%";
+  $("aisho").innerHTML = '相性◎のタイプ: <b>'+t.ai[0]+'「'+t.ai[1]+'」</b><br>'+t.ai[2];
+}
+
+/* ═════════ シェア ═════════ */
+
+function shareUrl(){
+  const {code,pcts,w} = current;
+  const p = pcts.map(x=>String(x).padStart(2,"0")).join("");
+  return location.origin + location.pathname + "?t="+code+"&p="+p+"&d="+w;
+}
+
+function shareX(){
+  const t = TYPES[current.code];
+  const text = '私は「'+t.name+'」('+current.code+') でした!\n'+
+               '愛の重さ: '+current.w+'% '+weightTitle(current.w)+'\n'+
+               '#恋愛16タイプ診断\n';
+  window.open("https://twitter.com/intent/tweet?text="+encodeURIComponent(text)+
+              "&url="+encodeURIComponent(shareUrl()), "_blank");
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+/* 結果画像 1080×1350 */
+async function saveImage(){
+  try{ await document.fonts.ready; }catch(e){}
+  const {code,pcts,w} = current;
+  const t = TYPES[code];
+  const cv = $("cv"), ctx = cv.getContext("2d");
+  const W = 1080, H = 1350, c = themeColor;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = "#0e0b1a"; ctx.fillRect(0,0,W,H);
+  const g = ctx.createRadialGradient(W/2,-120,50, W/2,-120,980);
+  g.addColorStop(0, c+"55"); g.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+
+  ctx.strokeStyle = c; ctx.lineWidth = 4;
+  ctx.strokeRect(40,40,W-80,H-80);
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#8d86a8";
+  ctx.font = "700 26px 'Zen Kaku Gothic New'";
+  ctx.fillText("恋 愛 16 タ イ プ 診 断", W/2, 120);
+
+  /* エンブレム(またはPNG) */
+  try{
+    const vis = await typeVisual(code, c, 520);
+    ctx.drawImage(vis, W/2-130, 170, 260, 260);
+  }catch(e){ /* 画像が出せなくても以降は描画する */ }
+
+  ctx.fillStyle = c;
+  ctx.font = "700 34px 'Zen Kaku Gothic New'";
+  ctx.fillText(code.split("").join("  "), W/2, 492);
+
+  ctx.fillStyle = "#f2effa";
+  ctx.shadowColor = c; ctx.shadowBlur = 30;
+  ctx.font = "68px 'Dela Gothic One'";
+  ctx.fillText(t.name, W/2, 572);
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = c;
+  ctx.font = "700 30px 'Zen Kaku Gothic New'";
+  ctx.fillText(t.copy, W/2, 638);
+
+  const barX = 140, barW = W-280, barH = 18;
+  let y = 720;
+  AXES.forEach((a,i)=>{
+    const p = pcts[i];
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#f2effa";
+    ctx.font = "700 26px 'Zen Kaku Gothic New'";
+    ctx.fillText(a.labels[0]+" "+p+"%", barX, y);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#8d86a8";
+    ctx.fillText(a.labels[1]+" "+(100-p)+"%", barX+barW, y);
+    ctx.fillStyle = "#241c40";
+    roundRect(ctx, barX, y+14, barW, barH, 9); ctx.fill();
+    ctx.fillStyle = c;
+    roundRect(ctx, barX, y+14, Math.max(barW*p/100, barH), barH, 9); ctx.fill();
+    y += 84;
+  });
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#8d86a8";
+  ctx.font = "700 26px 'Zen Kaku Gothic New'";
+  ctx.fillText("愛の重さ", barX, 1064);
+  ctx.fillStyle = c;
+  ctx.font = "56px 'Dela Gothic One'";
+  ctx.fillText(w+"%", barX, 1130);
+  ctx.fillStyle = "#f2effa";
+  ctx.font = "700 27px 'Zen Kaku Gothic New'";
+  ctx.fillText(weightTitle(w), barX+170, 1126);
+  ctx.fillStyle = "#241c40";
+  roundRect(ctx, barX, 1154, barW, barH, 9); ctx.fill();
+  ctx.fillStyle = c;
+  roundRect(ctx, barX, 1154, Math.max(barW*w/100, barH), barH, 9); ctx.fill();
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#8d86a8";
+  ctx.font = "700 24px 'Zen Kaku Gothic New'";
+  ctx.fillText("#恋愛16タイプ診断", W/2, 1262);
+
+  const a = document.createElement("a");
+  a.download = "renai_"+code+".png";
+  a.href = cv.toDataURL("image/png");
+  a.click();
+}
+
+/* ═════════ シェアURLからの直リンク ═════════ */
+
+function tryLoadFromUrl(){
+  const q = new URLSearchParams(location.search);
+  const code = q.get("t"), p = q.get("p"), d = q.get("d");
+  if(!code || !TYPES[code] || !p || p.length!==8 || d===null) return false;
+  const pcts = [0,1,2,3].map(i=>{
+    const n = parseInt(p.slice(i*2,i*2+2),10);
+    return isNaN(n) ? 50 : Math.min(100,Math.max(0,n));
+  });
+  const wv = Math.min(100, Math.max(0, parseInt(d,10)||0));
+  renderResult(code, pcts, wv);
+  $("btn-x").style.display = "none";
+  $("btn-retry").textContent = "自分も診断してみる";
+  show("scr-result");
+  return true;
+}
+
+/* ═════════ イベント ═════════ */
+
+initSwatches();
+$("btn-start").onclick = startQuiz;
+document.querySelectorAll(".ans").forEach(b=>{
+  b.onclick = ()=>answer(parseInt(b.dataset.v,10));
+});
+$("btn-back").onclick = ()=>{ if(cur>0){ cur--; renderQ(); } };
+$("btn-x").onclick = shareX;
+$("btn-img").onclick = saveImage;
+$("btn-retry").onclick = ()=>{
+  history.replaceState(null,"",location.pathname);
+  $("btn-x").style.display = "";
+  $("btn-retry").textContent = "もう一度診断する";
+  show("scr-start");
+};
+tryLoadFromUrl();
+</script>
+</body>
+</html>
