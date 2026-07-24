@@ -433,7 +433,7 @@ function emblemMarkup(code, color, size){
 /* ═════════ 状態 ═════════ */
 
 let order = [], answers = {}, cur = 0, current = null;
-let themeColor = THEME_COLORS[0][1];
+let themeColor = THEME_COLORS[1][1];
 const REF = new URLSearchParams(location.search).get("from") || "";
 
 const $ = id => document.getElementById(id);
@@ -450,7 +450,7 @@ function initSwatches(){
     b.className = "swatch";
     b.style.setProperty("--c",hex);
     b.setAttribute("aria-label", name);
-    b.setAttribute("aria-pressed", i===0 ? "true" : "false");
+    b.setAttribute("aria-pressed", i===1 ? "true" : "false");
     b.onclick = ()=>{
       document.querySelectorAll(".swatch").forEach(s=>s.setAttribute("aria-pressed","false"));
       b.setAttribute("aria-pressed","true");
@@ -685,10 +685,18 @@ async function saveImage(){
   ctx.fillStyle = c;
   roundRect(ctx, barX, 1154, Math.max(barW*w/100, barH), barH, 9); ctx.fill();
 
+  /* 相性◎(リプ欄が伸びる仕掛け) */
   ctx.textAlign = "center";
   ctx.fillStyle = "#8d86a8";
   ctx.font = "700 24px 'Zen Kaku Gothic New'";
-  ctx.fillText("#恋愛16タイプ診断", W/2, 1262);
+  ctx.fillText("相性◎のタイプ", W/2, 1210);
+  ctx.fillStyle = "#f2effa";
+  ctx.font = "700 30px 'Zen Kaku Gothic New'";
+  ctx.fillText(t.ai[0] + "\u3000" + t.ai[1], W/2, 1246);
+
+  ctx.fillStyle = "#8d86a8";
+  ctx.font = "700 24px 'Zen Kaku Gothic New'";
+  ctx.fillText("#恋愛16タイプ診断", W/2, 1288);
 
   const a = document.createElement("a");
   a.download = "renai_"+code+".png";
