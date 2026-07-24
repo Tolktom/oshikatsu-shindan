@@ -433,7 +433,7 @@ function emblemMarkup(code, color, size){
 /* ═════════ 状態 ═════════ */
 
 let order = [], answers = {}, cur = 0, current = null;
-let themeColor = THEME_COLORS[1][1];
+let themeColor = THEME_COLORS[0][1];
 const REF = new URLSearchParams(location.search).get("from") || "";
 
 const $ = id => document.getElementById(id);
@@ -450,7 +450,7 @@ function initSwatches(){
     b.className = "swatch";
     b.style.setProperty("--c",hex);
     b.setAttribute("aria-label", name);
-    b.setAttribute("aria-pressed", i===1 ? "true" : "false");
+    b.setAttribute("aria-pressed", i===0 ? "true" : "false");
     b.onclick = ()=>{
       document.querySelectorAll(".swatch").forEach(s=>s.setAttribute("aria-pressed","false"));
       b.setAttribute("aria-pressed","true");
