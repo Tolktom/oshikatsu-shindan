@@ -581,11 +581,19 @@ async function saveImage(){
   ctx.fillStyle = oshi;
   roundRect(ctx, barX, y+90, Math.max(barW*d/100, barH), barH, 9); ctx.fill();
 
-  // フッタ
+  // 相性◎(リプ欄が伸びる仕掛け)
   ctx.textAlign = "center";
   ctx.fillStyle = "#8d86a8";
   ctx.font = "700 24px 'Zen Kaku Gothic New'";
-  ctx.fillText("#推し活16タイプ診断", W/2, H-90);
+  ctx.fillText("相性◎のタイプ", W/2, 940);
+  ctx.fillStyle = "#f2effa";
+  ctx.font = "700 30px 'Zen Kaku Gothic New'";
+  ctx.fillText(t.ai[0] + "\u3000" + t.ai[1], W/2, 976);
+
+  // フッタ
+  ctx.fillStyle = "#8d86a8";
+  ctx.font = "700 24px 'Zen Kaku Gothic New'";
+  ctx.fillText("#推し活16タイプ診断", W/2, 1018);
 
   // ダウンロード
   const a = document.createElement("a");
@@ -642,4 +650,3 @@ tryLoadFromUrl();
 </script>
 </body>
 </html>
-
